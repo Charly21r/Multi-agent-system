@@ -39,7 +39,7 @@ weather_agent = Agent(
     name="Weather Agent",
     model_settings=weather_agent_settings,
     instructions=f"""{RECOMMENDED_PROMPT_PREFIX}\n{weather_agent_prompt}""",
-    model="gpt-4.1-nano",
+    model="gpt-4o-mini",
     tools=[WeatherTool]
 )
 
@@ -47,7 +47,7 @@ main_agent = Agent(
     name="Main Agent",
     model_settings=main_agent_settings,
     instructions=f"""{RECOMMENDED_PROMPT_PREFIX}\n{main_agent_prompt}""",
-    model="gpt-4.1-nano",
+    model="gpt-4o-mini",
     handoff_description="An agent capable of getting realtime weather data",
     handoffs=[weather_agent]
 )
