@@ -2,3 +2,4 @@ streamlit
 openai-agents
 python-dotenv
 python-weather
+amadeus
