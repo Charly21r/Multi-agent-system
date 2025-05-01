@@ -1,6 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Any
-from agents import FunctionTool, function_tool
+from agents import function_tool
 import python_weather
 from amadeus import Client, ResponseError
 from dotenv import load_dotenv
@@ -76,6 +75,7 @@ def FlightSearchTool(args: FlightSearchArgs):
     str: Available flights for the chosen date and route
     """
     try:
+        print(args.origin, args.destination, args.departure_date, args.num_passengers)
         # Call the API
         response = amadeus.shopping.flight_offers_search.get(
             originLocationCode=args.origin,
@@ -84,7 +84,7 @@ def FlightSearchTool(args: FlightSearchArgs):
             adults=args.num_passengers,
             max=5
         )
-
+        
         # Saving the results
         results = []
         for offer in response.data:
@@ -109,5 +109,6 @@ def FlightSearchTool(args: FlightSearchArgs):
 
         return results
     except ResponseError as error:
+        
         print(error)
         return None

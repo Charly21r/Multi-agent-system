@@ -49,7 +49,6 @@ weather_agent = Agent(
     model_settings=weather_agent_settings,
     instructions=f"""{RECOMMENDED_PROMPT_PREFIX}\n{weather_agent_prompt}""",
     model="gpt-4o-mini",
-    handoff_description="An agent capable of getting realtime weather data",
     tools=[WeatherTool]
 )
 
@@ -69,12 +68,20 @@ main_agent = Agent(
     model_settings=main_agent_settings,
     instructions=f"""{RECOMMENDED_PROMPT_PREFIX}\n{main_agent_prompt}""",
     model="gpt-4o-mini",
-    handoffs=[weather_agent, flight_agent]
+    tools = [
+        weather_agent.as_tool(
+            tool_name="weather_report",
+            tool_description="An agent capable of getting realtime weather data"
+        ),
+        flight_agent.as_tool(
+            tool_name="flight_search",
+            tool_description="An agent capable of searching for flights"
+        )
+    ]
 )
 
-
 async def main():
-    answer = await Runner.run(main_agent, input="Check flights from Madrid to Paris on the 25th of june of 2025")
+    answer = await Runner.run(main_agent, input="I want to go to from madrid to new york for the weekend of the 9th of may of 2025, could you plan the trip for me?")
     print(answer.final_output)
 
 
