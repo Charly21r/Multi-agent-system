@@ -79,17 +79,22 @@ main_agent = Agent(
 
 
 
-async def run_agent(query:str):
+async def run_agent(query:str) -> str:
     """
-    
+    Runs query through the multi-agent system
+
+    Parameters:
+    query (str): The query inputted by the user
+    Returns:
+    str: Final answer to the user's query
     """
     answer = await Runner.run(main_agent, input=user_message)
     return answer.final_output
 
 
-def display_history():
+def display_history() -> None:
     """
-
+    Displays chat history
     """
     for message in st.session_state.history:
         with st.chat_message("user"):
@@ -106,14 +111,11 @@ if __name__=="__main__":
     if "history" not in st.session_state:
         st.session_state["history"] = []
     
-    display_history()
-
+    display_history()   # Display chat history
     user_message = st.chat_input("Enter your message")   # User's input
-
     if user_message:
         # Display user message on the screen
         with st.chat_message("user"):
             st.markdown(user_message)
-        answer = asyncio.run(run_agent(user_message))
+        answer = asyncio.run(run_agent(user_message))   # Run the agent system
         st.session_state.history.append({"User": user_message, "Agent": answer})    # Add message and response to the history
-
