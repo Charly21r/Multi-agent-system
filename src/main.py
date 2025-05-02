@@ -43,7 +43,6 @@ flight_agent_settings = ModelSettings(
     top_p=0.35
 )
 
-
 weather_agent = Agent(
     name="Weather Agent",
     model_settings=weather_agent_settings,
@@ -51,7 +50,6 @@ weather_agent = Agent(
     model="gpt-4o-mini",
     tools=[WeatherTool]
 )
-
 
 flight_agent = Agent(
     name="Flight Agent",
@@ -61,7 +59,6 @@ flight_agent = Agent(
     handoff_description="An agent capable of searching for flights",
     tools=[FlightSearchTool]
 )
-
 
 main_agent = Agent(
     name="Main Agent",
@@ -80,11 +77,43 @@ main_agent = Agent(
     ]
 )
 
-async def main():
-    answer = await Runner.run(main_agent, input="I want to go to from madrid to new york for the weekend of the 9th of may of 2025, could you plan the trip for me?")
-    print(answer.final_output)
+
+
+async def run_agent(query:str):
+    """
+    
+    """
+    answer = await Runner.run(main_agent, input=user_message)
+    return answer.final_output
+
+
+def display_history():
+    """
+
+    """
+    for message in st.session_state.history:
+        with st.chat_message("user"):
+            st.markdown(message["User"])
+        with st.chat_message("assistant"):
+            st.markdown(message["Agent"])
 
 
 if __name__=="__main__":
-    asyncio.run(main())
+    # Set title for the streamlit UI
+    st.title("Trip Planning Agent")
+
+    # Add message history to the session state
+    if "history" not in st.session_state:
+        st.session_state["history"] = []
+    
+    display_history()
+
+    user_message = st.chat_input("Enter your message")   # User's input
+
+    if user_message:
+        # Display user message on the screen
+        with st.chat_message("user"):
+            st.markdown(user_message)
+        answer = asyncio.run(run_agent(user_message))
+        st.session_state.history.append({"User": user_message, "Agent": answer})    # Add message and response to the history
 

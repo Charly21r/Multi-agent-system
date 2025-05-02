@@ -7,6 +7,7 @@ import os
 
 load_dotenv()
 
+
 # Configuration of the amadeus api client
 amadeus = Client(
     client_id=os.getenv('AMADEUS_API_KEY'),
