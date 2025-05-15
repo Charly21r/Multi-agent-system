@@ -13,17 +13,17 @@ os.environ['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY')  # OpenAI API Key con
 # Load agent prompts from the files
 try:
     with open('./prompts/main_agent_prompt.txt', "rb") as f:
-        main_agent_prompt = f.read().decode('utf-8')
+        PLANNING_AGENT_PROMPT = f.read().decode('utf-8')
     with open('./prompts/weather_agent_prompt.txt', "rb") as f:
-        weather_agent_prompt = f.read().decode('utf-8')
+        WEATHER_AGENT_PROMPT = f.read().decode('utf-8')
     with open('./prompts/flight_agent_prompt.txt', "rb") as f:
-        flight_agent_prompt = f.read().decode('utf-8')
+        FLIGHT_AGENT_PROMPT = f.read().decode('utf-8')
 except Exception as e:
     raise Exception(f"""An exception occurred while loading the system prompt: {e}""")
 
 
 # Model settings for the main agent
-main_agent_settings = ModelSettings(
+planning_agent_settings = ModelSettings(
     parallel_tool_calls=True,   # Allow parallel calls to the tools
     temperature=0.5,
     top_p=0.35
@@ -46,7 +46,7 @@ flight_agent_settings = ModelSettings(
 weather_agent = Agent(
     name="Weather Agent",
     model_settings=weather_agent_settings,
-    instructions=f"""{RECOMMENDED_PROMPT_PREFIX}\n{weather_agent_prompt}""",
+    instructions=f"""{RECOMMENDED_PROMPT_PREFIX}\n{WEATHER_AGENT_PROMPT}""",
     model="gpt-4o-mini",
     tools=[WeatherTool]
 )
@@ -54,16 +54,16 @@ weather_agent = Agent(
 flight_agent = Agent(
     name="Flight Agent",
     model_settings=flight_agent_settings,
-    instructions=f"""{RECOMMENDED_PROMPT_PREFIX}\n{flight_agent_prompt}""",
+    instructions=f"""{RECOMMENDED_PROMPT_PREFIX}\n{FLIGHT_AGENT_PROMPT}""",
     model="gpt-4o-mini",
     handoff_description="An agent capable of searching for flights",
     tools=[FlightSearchTool]
 )
 
 main_agent = Agent(
-    name="Main Agent",
-    model_settings=main_agent_settings,
-    instructions=f"""{RECOMMENDED_PROMPT_PREFIX}\n{main_agent_prompt}""",
+    name="Planning Agent",
+    model_settings=planning_agent_settings,
+    instructions=f"""{RECOMMENDED_PROMPT_PREFIX}\n{PLANNING_AGENT_PROMPT}""",
     model="gpt-4o-mini",
     tools = [
         weather_agent.as_tool(
